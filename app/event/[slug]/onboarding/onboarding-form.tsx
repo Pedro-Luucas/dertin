@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export function OnboardingForm({ eventSlug }: { eventSlug: string }) {
   const router = useRouter();
-  const { currentEvent, setCurrentUser } = useSessionStore();
+  const { adminReturnEventId, currentEvent, setCurrentUser } = useSessionStore();
   const [step, setStep] = useState<"info" | "photo">("info");
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -69,7 +69,7 @@ export function OnboardingForm({ eventSlug }: { eventSlug: string }) {
     setLoading(true);
 
     try {
-      const fp = generateFingerprint();
+      const fp = generateFingerprint({ fresh: Boolean(adminReturnEventId) });
 
       const { user } = await api.users.create(eventSlug, {
         device_fingerprint: fp,

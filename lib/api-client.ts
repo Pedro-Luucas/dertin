@@ -138,6 +138,11 @@ export const api = {
         stats: { users: number; swipes: number; matches: number };
       }>(`/admin/events/${id}`),
 
+    deleteEvent: (id: string) =>
+      request<{ success: boolean }>(`/admin/events/${id}`, {
+        method: "DELETE",
+      }),
+
     toggleBan: (eventId: string, userId: string, ban: boolean) =>
       request<{ success: boolean }>(`/admin/events/${eventId}/users/${userId}`, {
         method: "PATCH",

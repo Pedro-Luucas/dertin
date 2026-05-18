@@ -44,3 +44,34 @@ export async function GET(
     },
   });
 }
+
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+
+  const { data: event, error: eventError } = await supabaseAdmin
+    .from("events")
+    .select("id, title")
+    .eq("id", id)
+    .single();
+
+  if (eventError || !event) {
+    console.error("[DELETE /api/admin/events/[id]] Event not found:", id, eventError?.message);
+    return NextResponse.json({ error: "Evento não encontrado" }, { status: 404 });
+  }
+
+  const { error } = await supabaseAdmin
+    .from("events")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    console.error("[DELETE /api/admin/events/[id]] Delete error:", error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  console.log(`[DELETE /api/admin/events/[id]] Deleted event ${event.title} (${id})`);
+  return NextResponse.json({ success: true });
+}

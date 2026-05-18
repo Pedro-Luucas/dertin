@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useSessionStore } from "@/stores/session";
 import { api } from "@/lib/api-client";
 import { generateFingerprint } from "@/lib/fingerprint";
@@ -13,9 +13,11 @@ interface Props {
 
 export function EventLanding({ event }: Props) {
   const router = useRouter();
-  const { setCurrentEvent, setCurrentUser } = useSessionStore();
+  const { adminReturnEventId, setCurrentEvent, setCurrentUser } = useSessionStore();
 
-  async function checkExistingUser() {
+  const checkExistingUser = useCallback(async () => {
+    if (adminReturnEventId) return;
+
     try {
       const fp = generateFingerprint();
       const { user } = await api.users.getByFingerprint(event.slug, fp);
@@ -26,7 +28,7 @@ export function EventLanding({ event }: Props) {
     } catch (err) {
       console.error("[EventLanding] Error checking existing user:", err);
     }
-  }
+  }, [adminReturnEventId, event.slug, router, setCurrentUser]);
 
   useEffect(() => {
     setCurrentEvent(event);
@@ -34,7 +36,7 @@ export function EventLanding({ event }: Props) {
 
   useEffect(() => {
     checkExistingUser();
-  }, [event]);
+  }, [checkExistingUser]);
 
   return (
     <div className="flex flex-1 flex-col h-screen-safe">

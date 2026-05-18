@@ -25,6 +25,7 @@ export function EventDetail({ eventId }: { eventId: string }) {
   const [stats, setStats] = useState<Stats>({ users: 0, swipes: 0, matches: 0 });
   const [loading, setLoading] = useState(true);
   const [seeding, setSeeding] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [seedOpen, setSeedOpen] = useState(false);
   const [seedCount, setSeedCount] = useState(20);
   const [seedGender, setSeedGender] = useState<SeedGender>("mixed");
@@ -157,6 +158,27 @@ export function EventDetail({ eventId }: { eventId: string }) {
     }
   }
 
+  async function handleDeleteEvent() {
+    if (!event || deleting) return;
+
+    const confirmed = window.confirm(
+      `Excluir o evento "${event.title}"?\n\nIsso apaga o evento e todos os usuários, fotos, swipes, matches e mensagens dele. Essa ação não pode ser desfeita.`
+    );
+
+    if (!confirmed) return;
+
+    setDeleting(true);
+    try {
+      await api.admin.deleteEvent(eventId);
+      toast.success("Evento excluído");
+      router.push("/admin");
+    } catch (err) {
+      console.error("[EventDetail] Error deleting event:", err);
+      toast.error("Erro ao excluir evento");
+      setDeleting(false);
+    }
+  }
+
   async function handleSeed() {
     setSeeding(true);
     try {
@@ -228,7 +250,7 @@ export function EventDetail({ eventId }: { eventId: string }) {
           </div>
 
           {/* Actions row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
             <button
               onClick={() => setSeedOpen((v) => !v)}
               className="rounded-2xl bg-purple/5 border border-purple/20 py-4 px-5 text-sm text-purple font-medium hover:bg-purple/10 active:scale-[0.98] transition-all text-left flex items-center justify-between"
@@ -259,6 +281,26 @@ export function EventDetail({ eventId }: { eventId: string }) {
                 })}
               </span>
             </div>
+            <button
+              onClick={handleDeleteEvent}
+              disabled={deleting}
+              className="rounded-2xl bg-destructive/10 border border-destructive/25 py-4 px-5 text-sm text-destructive font-bold hover:bg-destructive/15 active:scale-[0.98] transition-all text-left flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span>{deleting ? "Excluindo evento..." : "Excluir evento e usuários"}</span>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14" />
+                <path d="M10 11v5M14 11v5" />
+              </svg>
+            </button>
           </div>
 
           {/* Seed customization panel */}
