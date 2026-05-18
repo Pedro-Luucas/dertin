@@ -16,6 +16,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "api.qrserver.com",
       },
+      {
+        protocol: "https",
+        hostname: "randomuser.me",
+      },
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+      },
     ],
   },
 };

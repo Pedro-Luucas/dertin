@@ -29,7 +29,7 @@ export default function HomePage() {
       <div className="mt-16">
         <Link
           href="/admin"
-          className="text-xs text-muted-foreground/60 hover:text-purple transition-colors"
+          className="text-base text-muted-foreground/70 hover:text-purple transition-colors"
         >
           Área do organizador →
         </Link>

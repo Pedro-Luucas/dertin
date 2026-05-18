@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
+import { AdminReturnBanner } from "@/components/shared/admin-return-banner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -39,6 +40,7 @@ export default function RootLayout({
     >
       <body className="min-h-screen-safe flex flex-col bg-background text-foreground">
         {children}
+        <AdminReturnBanner />
         <Toaster
           position="top-center"
           theme="dark"

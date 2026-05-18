@@ -144,10 +144,26 @@ export const api = {
         body: JSON.stringify({ is_banned: ban }),
       }),
 
-    seedEvent: (eventId: string) =>
-      request<{ count: number }>(`/admin/events/${eventId}/seed`, {
-        method: "POST",
-      }),
+    seedEvent: (
+      eventId: string,
+      options?: {
+        count?: number;
+        gender?: "mixed" | "male" | "female";
+        archetype?: "mixed" | "enthusiastic" | "shy" | "normal";
+        with_swipes?: boolean;
+      }
+    ) => {
+      const params = new URLSearchParams();
+      if (options?.count) params.set("count", String(options.count));
+      if (options?.gender) params.set("gender", options.gender);
+      if (options?.archetype) params.set("archetype", options.archetype);
+      if (options?.with_swipes) params.set("with_swipes", "true");
+      const qs = params.toString();
+      return request<{ count: number; photos: number; swipes: number; matches: number }>(
+        `/admin/events/${eventId}/seed${qs ? `?${qs}` : ""}`,
+        { method: "POST" }
+      );
+    },
 
     uploadCover: async (file: File, slug: string) => {
       const formData = new FormData();
