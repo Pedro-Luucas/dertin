@@ -38,6 +38,13 @@ export async function GET(
   }
 
   if (excludeUserId) {
+    // Fetch the requesting user to apply gender/sexuality filtering
+    const { data: currentUser } = await supabaseAdmin
+      .from("event_users")
+      .select("gender, sexuality")
+      .eq("id", excludeUserId)
+      .single();
+
     const { data: swipedIds } = await supabaseAdmin
       .from("swipes")
       .select("swiped_id")
@@ -54,13 +61,28 @@ export async function GET(
       ...(blockedIds?.map((b) => b.blocked_id) || []),
     ];
 
-    const { data: users, error } = await supabaseAdmin
+    let query = supabaseAdmin
       .from("event_users")
       .select("*")
       .eq("event_id", event.id)
       .eq("is_banned", false)
-      .not("id", "in", `(${excludeIds.join(",")})`)
-      .order("created_at", { ascending: false });
+      .not("id", "in", `(${excludeIds.join(",")})`);
+
+    // Gender/sexuality filtering
+    // Non-binary users always see everyone, and always appear for everyone
+    if (currentUser && currentUser.gender !== "non-binary" && currentUser.gender !== "other") {
+      const sexuality = currentUser.sexuality || "heterosexual";
+
+      if (sexuality === "heterosexual") {
+        const oppositeGender = currentUser.gender === "male" ? "female" : "male";
+        query = query.in("gender", [oppositeGender, "non-binary", "other"]);
+      } else if (sexuality === "homosexual") {
+        query = query.in("gender", [currentUser.gender, "non-binary", "other"]);
+      }
+      // bi, pan, other sexualities → no gender filter, show everyone
+    }
+
+    const { data: users, error } = await query.order("created_at", { ascending: false });
 
     if (error) {
       console.error("[GET /api/events/[slug]/users] Candidates query error:", error.message);

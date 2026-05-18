@@ -96,6 +96,16 @@ export function SwipeEngine() {
         >
           Ver seus matches
         </button>
+        <button
+          onClick={() => {
+            useSwipeStore.getState().reset();
+            setLoading(true);
+            loadCandidates();
+          }}
+          className="mt-3 rounded-2xl bg-secondary px-8 py-4 text-foreground font-medium active:scale-95 transition-all text-sm"
+        >
+          Resetar (dev)
+        </button>
       </div>
     );
   }
@@ -118,7 +128,7 @@ export function SwipeEngine() {
 
       {/* Swipe area */}
       <div className="flex flex-1 items-center justify-center px-4 pb-4">
-        <SwipeCard candidate={current} onSwipe={handleSwipe} />
+        <SwipeCard key={current.id} candidate={current} onSwipe={handleSwipe} />
       </div>
 
       {/* Match drawer */}
