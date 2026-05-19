@@ -16,24 +16,50 @@ const FEMALE_NAMES = [
   "Manuela", "Valentina", "Gabriela", "Yasmin", "Laura", "Rafaela", "Clara",
 ];
 
-const SHORT_BIOS = [
-  "Curtindo a noite 🎶",
-  "Bora trocar ideia?",
-  "Solteiro(a) e pronto pra festa",
-  "Me chama pra dançar",
-  "Só vim pela música",
-  "Primeira vez aqui 👀",
-  "Aqui pra conhecer gente nova",
+const MALE_SHORT_BIOS = [
+  "Curtindo a noite com boa música 🎶",
+  "Bora trocar uma ideia?",
+  "Solteiro e a fim de conhecer gente nova",
+  "Aqui pelo som e pelas conversas",
+  "Primeira vez nesse rolê 👀",
+  "Risadinha fácil, papo bom",
+  "Topo qualquer conversa de boa",
+  "Cristão, na paz curtindo a noite ✝️",
+  "De Cristo e do rolê tranquilo 🙏",
+  "Judeu, vim conhecer gente nova ✡️",
 ];
 
-const LONG_BIOS = [
-  "Engenheiro de software de dia, DJ amador de noite. Apaixonado por música eletrônica, viagens e boas conversas. Se você curte cinema cult e cerveja artesanal, manda DM 🍻",
-  "Designer, viciada em café e em descobrir bares novos pela cidade. Adoro um rolê espontâneo, festival de música e gente que sabe rir de si mesma.",
-  "Médica residente, mas hoje tô só aqui pra esquecer o plantão. Curto tatuagem, vinil e gatos. Procurando alguém que topa um rolê às 3 da manhã.",
+const FEMALE_SHORT_BIOS = [
+  "Curtindo a noite com boa companhia 🎶",
+  "Bora trocar uma ideia?",
+  "Solteira e a fim de conhecer gente nova",
+  "Aqui pela música e pelos papos",
+  "Primeira vez nesse rolê 👀",
+  "Risada fácil e papo bom",
+  "Topo qualquer conversa de boa",
+  "Cristã, na paz curtindo o som ✝️",
+  "De Cristo e do rolê tranquilo 🙏",
+  "Judia, vim conhecer pessoas novas ✡️",
+];
+
+const MALE_LONG_BIOS = [
+  "Engenheiro de software de dia, curto um som de qualidade à noite. Apaixonado por viagens, café bom e boas conversas. Se você curte cinema e papo bom, manda DM ☕",
   "Sócio de uma cafeteria no centro. Maratono séries, jogo basquete aos domingos e nunca digo não a um sushi. Vamos conversar?",
-  "Estudante de arquitetura, fotógrafa nas horas vagas. Apaixonada por viagens de mochila, plantas e qualquer lugar com vista pro mar.",
-  "Personal trainer e nutricionista. Curto trilha, surf e um happy hour bem feito. Sapiosexual confessa.",
-  "Publicitário, escritor de bolso e fã de stand-up. Adoro um plot twist na conversa. Se topa bar de esquina, somos compatíveis.",
+  "Publicitário e fã de stand-up. Adoro um plot twist na conversa e uma trilha sonora boa. Se topa um papo leve, somos compatíveis.",
+  "Personal trainer. Curto trilha, praia e um açaí depois do treino. Procurando alguém pra rir junto e curtir o dia.",
+  "Cristão, engenheiro e fã de música boa. Curto um culto, um café com a galera e uma trilha no fim de semana. Procurando alguém que compartilhe da mesma fé ✝️",
+  "De Cristo, professor e apaixonado por viagens. Adoro um louvor, um livro bom e uma conversa sincera sobre a vida. Se você também ama o Senhor, bora trocar ideia 🙏",
+  "Judeu, advogado e fã de boa comida. Curto Shabat em família, um bom livro e viagens pelo mundo. Procuro alguém pra dividir risadas e um bom hummus ✡️",
+];
+
+const FEMALE_LONG_BIOS = [
+  "Designer, viciada em café e em descobrir cafeterias novas pela cidade. Adoro um rolê espontâneo, festival de música e gente que sabe rir de si mesma ☕",
+  "Médica residente, mas hoje tô só aqui pra desligar do plantão. Curto pintura, vinil e gatos. Procurando alguém que topa um café e um papo bom.",
+  "Estudante de arquitetura, fotógrafa nas horas vagas. Apaixonada por viagens, plantas e qualquer lugar com vista pro mar 🌊",
+  "Nutricionista. Curto trilha, yoga e um happy hour bem feito. Procurando alguém que tope uma boa conversa e uma risada.",
+  "Cristã, designer e fã de música boa. Curto um culto, um café com as amigas e uma trilha no fim de semana. Procurando alguém que compartilhe da mesma fé ✝️",
+  "De Cristo, professora e apaixonada por viagens. Adoro um louvor, um livro bom e uma conversa sincera sobre a vida. Se você também ama o Senhor, bora trocar ideia 🙏",
+  "Judia, psicóloga e fã de boa comida. Curto Shabat em família, um bom livro e viagens pelo mundo. Procuro alguém pra dividir risadas e um bom papo ✡️",
 ];
 
 const DRINKS = [
@@ -202,16 +228,19 @@ export async function POST(
     let bio: string | null;
     let instagram: string | null;
     let photoCount: number;
+    const shortBios = gender === "homem" ? MALE_SHORT_BIOS : FEMALE_SHORT_BIOS;
+    const longBios = gender === "homem" ? MALE_LONG_BIOS : FEMALE_LONG_BIOS;
+
     if (archetype === "shy") {
       bio = null;
       instagram = Math.random() < 0.3 ? instagramHandle(name) : null;
       photoCount = 1;
     } else if (archetype === "enthusiastic") {
-      bio = randomItem(LONG_BIOS);
+      bio = randomItem(longBios);
       instagram = instagramHandle(name);
       photoCount = 3 + Math.floor(Math.random() * 2); // 3-4
     } else {
-      bio = Math.random() < 0.8 ? randomItem(SHORT_BIOS) : null;
+      bio = Math.random() < 0.8 ? randomItem(shortBios) : null;
       instagram = Math.random() < 0.7 ? instagramHandle(name) : null;
       photoCount = 1 + Math.floor(Math.random() * 3); // 1-3
     }

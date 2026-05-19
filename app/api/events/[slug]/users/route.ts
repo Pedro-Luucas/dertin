@@ -82,7 +82,7 @@ export async function GET(
       // bi, pan, other sexualities → no gender filter, show everyone
     }
 
-    const { data: users, error } = await query.order("created_at", { ascending: false });
+    const { data: users, error } = await query;
 
     if (error) {
       console.error("[GET /api/events/[slug]/users] Candidates query error:", error.message);
@@ -93,13 +93,20 @@ export async function GET(
       return NextResponse.json({ candidates: [] });
     }
 
+    // Fisher-Yates shuffle so the order is independent of registration time
+    const shuffledUsers = [...users];
+    for (let i = shuffledUsers.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledUsers[i], shuffledUsers[j]] = [shuffledUsers[j], shuffledUsers[i]];
+    }
+
     const { data: photos } = await supabaseAdmin
       .from("profile_photos")
       .select("*")
-      .in("event_user_id", users.map((u) => u.id))
+      .in("event_user_id", shuffledUsers.map((u) => u.id))
       .order("position");
 
-    const candidates = users.map((user) => ({
+    const candidates = shuffledUsers.map((user) => ({
       ...user,
       photos: photos?.filter((p) => p.event_user_id === user.id) || [],
     }));

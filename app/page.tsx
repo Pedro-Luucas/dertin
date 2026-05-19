@@ -26,12 +26,13 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="mt-16">
+      <div className="mt-14">
         <Link
           href="/admin"
-          className="text-base text-muted-foreground/70 hover:text-purple transition-colors"
+          className="group inline-flex items-center gap-2 rounded-full border border-purple-light/40 bg-purple px-6 py-3 text-sm font-bold text-white shadow-[0_0_30px_oklch(0.55_0.25_285_/_35%)] transition-all hover:-translate-y-0.5 hover:bg-purple-light hover:shadow-[0_0_44px_oklch(0.7_0.2_285_/_45%)] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-purple/50"
         >
-          Área do organizador →
+          Área do organizador
+          <span className="transition-transform group-hover:translate-x-1">→</span>
         </Link>
       </div>
     </div>
